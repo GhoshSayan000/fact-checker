@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
+import time
 from dotenv import load_dotenv
 
 from pipeline.step1_optimizer import optimize
@@ -35,15 +36,19 @@ def check_fact(news: NewsInput):
         step1 = optimize(news.text)
         claim = step1["claim"]
         translated = step1["translated"]
+        time.sleep(10)
 
         step2 = extract_keyterms(claim)
         queries = step2["queries"]
         keyterms = step2["keyterms"]
         context = step2["context"]
+        time.sleep(10)
 
         step3 = search_web(queries)
+        time.sleep(10)
 
         step4 = summarize_evidence(claim, step3)
+        time.sleep(10)
 
         step5 = give_verdict(claim, step4, step3)
 
