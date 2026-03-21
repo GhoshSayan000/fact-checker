@@ -1,11 +1,10 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def optimize(text: str) -> dict:
     prompt = f"""
@@ -13,7 +12,7 @@ You are a fact-checking assistant.
 
 Given the following news or social media post (possibly in Hindi, Tamil, Bengali, or any Indian language):
 
-\"{text}\"
+"{text}"
 
 Do the following:
 1. Detect the language and translate it to English if it is not already in English.
@@ -24,7 +23,10 @@ Respond in this exact format:
 TRANSLATED: <full english translation>
 CLAIM: <single core factual claim>
 """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
     output = response.text.strip()
 
     translated = ""
