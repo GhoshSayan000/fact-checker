@@ -6,3 +6,4 @@ python-dotenv
 serpapi
 beautifulsoup4
 google-generativeai
+
