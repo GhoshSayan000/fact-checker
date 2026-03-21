@@ -1,11 +1,10 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def give_verdict(claim: str, evidence: dict, search_results: list) -> dict:
 
@@ -38,7 +37,10 @@ EXPLANATION: <2 to 3 sentences explaining why you gave this verdict>
 SOURCES: <comma separated list of URLs that were most useful>
 """
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
     output = response.text.strip()
 
     verdict = "Unverified"
@@ -66,5 +68,3 @@ SOURCES: <comma separated list of URLs that were most useful>
         "explanation": explanation,
         "sources": sources
     }
-```
-
