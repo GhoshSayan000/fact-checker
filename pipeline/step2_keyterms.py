@@ -27,7 +27,7 @@ QUERIES:
 - <search query 3>
 """
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="gemini-1.5-flash",
         contents=prompt
     )
     output = response.text.strip()
