@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vernacular Fact Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 15px;
+            resize: vertical;
+            outline: none;
+            transition: border 0.3s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        textarea:focus {
+            border-color: #4361ee;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 14px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #3451d1;
+        }
+
+        button:disabled {
+            background: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .loader.show {
+            display: block;
+        }
+
+        .result-card {
+            display: none;
+            margin-top: 24px;
+            border-radius: 12px;
+            padding: 24px;
+            border: 2px solid;
+        }
+
+        .result-card.show {
+            display: block;
+        }
+
+        .result-card.true {
+            background: #f0fff4;
+            border-color: #38a169;
+        }
+
+        .result-card.false {
+            background: #fff5f5;
+            border-color: #e53e3e;
+        }
+
+        .result-card.unverified {
+            background: #fffff0;
+            border-color: #d69e2e;
+        }
+
+        .verdict-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .true .verdict-badge {
+            background: #38a169;
+            color: white;
+        }
+
+        .false .verdict-badge {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .unverified .verdict-badge {
+            background: #d69e2e;
+            color: white;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #333;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-value {
+            color: #444;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .confidence-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .true .confidence-fill {
+            background: #38a169;
+        }
+
+        .false .confidence-fill {
+            background: #e53e3e;
+        }
+
+        .unverified .confidence-fill {
+            background: #d69e2e;
+        }
+
+        .sources-list {
+            list-style: none;
+            margin-top: 6px;
+        }
+
+        .sources-list li {
+            margin-bottom: 6px;
+        }
+
+        .sources-list a {
+            color: #4361ee;
+            font-size: 13px;
+            word-break: break-all;
+            text-decoration: none;
+        }
+
+        .sources-list a:hover {
+            text-decoration: underline;
+        }
+
+        .error-card {
+            display: none;
+            margin-top: 24px;
+            background: #fff5f5;
+            border: 2px solid #e53e3e;
+            border-radius: 12px;
+            padding: 20px;
+            color: #e53e3e;
+            font-size: 14px;
+        }
+
+        .error-card.show {
+            display: block;
+        }
+
+        .steps-indicator {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .steps-indicator.show {
+            display: block;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .step-item.active {
+            color: #4361ee;
+            font-weight: 600;
+        }
+
+        .step-item.done {
+            color: #38a169;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .step-item.active .step-dot {
+            background: #4361ee;
+        }
+
+        .step-item.done .step-dot {
+            background: #38a169;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vernacular Fact Checker</h1>
+        <p class="subtitle">Paste any news or social media post in any Indian language</p>
+
+        <textarea id="newsInput" placeholder="Paste your news here... (Hindi, Tamil, Bengali, English, etc.)"></textarea>
+
+        <button id="checkBtn" onclick="checkFact()">Check Fact</button>
+
+        <div class="steps-indicator" id="stepsIndicator">
+            <div class="step-item" id="step1">
+                <div class="step-dot"></div>
+                Step 1 — Translating and extracting claim...
+            </div>
+            <div class="step-item" id="step2">
+                <div class="step-dot"></div>
+                Step 2 — Finding key terms...
+            </div>
+            <div class="step-item" id="step3">
+                <div class="step-dot"></div>
+                Step 3 — Searching the web...
+            </div>
+            <div class="step-item" id="step4">
+                <div class="step-dot"></div>
+                Step 4 — Analyzing evidence...
+            </div>
+            <div class="step-item" id="step5">
+                <div class="step-dot"></div>
+                Step 5 — Generating verdict...
+            </div>
+        </div>
+
+        <div class="loader" id="loader">
+            Processing your request, please wait...
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <div class="verdict-badge" id="verdictBadge"></div>
+
+            <div class="result-label">Extracted Claim</div>
+            <div class="result-value" id="claimValue"></div>
+
+            <div class="result-label">Confidence</div>
+            <div class="result-value" id="confidenceValue"></div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+            </div>
+
+            <div class="result-label">Explanation</div>
+            <div class="result-value" id="explanationValue"></div>
+
+            <div class="result-label">Sources Checked</div>
+            <ul class="sources-list" id="sourcesList"></ul>
+        </div>
+
+        <div class="error-card" id="errorCard"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = "https://your-render-url.onrender.com";
+
+        async function checkFact() {
+            const text = document.getElementById("newsInput").value.trim();
+
+            if (!text) {
+                alert("Please paste a news post first!");
+                return;
+            }
+
+            const btn = document.getElementById("checkBtn");
+            const loader = document.getElementById("loader");
+            const resultCard = document.getElementById("resultCard");
+            const errorCard = document.getElementById("errorCard");
+            const stepsIndicator = document.getElementById("stepsIndicator");
+
+            btn.disabled = true;
+            loader.classList.add("show");
+            resultCard.classList.remove("show");
+            errorCard.classList.remove("show");
+            stepsIndicator.classList.add("show");
+
+            animateSteps();
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/check`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                showResult(data);
+
+            } catch (error) {
+                errorCard.textContent = "Error: " + error.message;
+                errorCard.classList.add("show");
+            } finally {
+                btn.disabled = false;
+                loader.classList.remove("show");
+                stepsIndicator.classList.remove("show");
+                resetSteps();
+            }
+        }
+
+        function showResult(data) {
+            const resultCard = document.getElementById("resultCard");
+            const verdictBadge = document.getElementById("verdictBadge");
+            const claimValue = document.getElementById("claimValue");
+            const confidenceValue = document.getElementById("confidenceValue");
+            const confidenceFill = document.getElementById("confidenceFill");
+            const explanationValue = document.getElementById("explanationValue");
+            const sourcesList = document.getElementById("sourcesList");
+
+            const verdict = data.verdict.toLowerCase();
+            resultCard.className = "result-card show " + verdict;
+            verdictBadge.textContent = data.verdict;
+            claimValue.textContent = data.claim;
+            confidenceValue.textContent = data.confidence + "%";
+            explanationValue.textContent = data.explanation;
+
+            setTimeout(() => {
+                confidenceFill.style.width = data.confidence + "%";
+            }, 100);
+
+            sourcesList.innerHTML = "";
+            if (data.sources && data.sources.length > 0) {
+                data.sources.forEach(url => {
+                    if (url) {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.textContent = url;
+                        a.target = "_blank";
+                        li.appendChild(a);
+                        sourcesList.appendChild(li);
+                    }
+                });
+            } else {
+                sourcesList.innerHTML = "<li>No sources found</li>";
+            }
+
+            resultCard.classList.add("show");
+        }
+
+        let stepInterval;
+
+        function animateSteps() {
+            const steps = ["step1", "step2", "step3", "step4", "step5"];
+            let current = 0;
+
+            steps.forEach(id => {
+                document.getElementById(id).className = "step-item";
+            });
+
+            stepInterval = setInterval(() => {
+                if (current > 0) {
+                    document.getElementById(steps[current - 1]).className = "step-item done";
+                }
+                if (current < steps.length) {
+                    document.getElementById(steps[current]).className = "step-item active";
+                    current++;
+                } else {
+                    clearInterval(stepInterval);
+                }
+            }, 2000);
+        }
+
+        function resetSteps() {
+            clearInterval(stepInterval);
+            const steps = ["step1", "step2", "step3", "step4", "step5"];
+            steps.forEach(id => {
+                document.getElementById(id).className = "step-item";
+            });
+        }
+    </script>
+</body>
+</html>
