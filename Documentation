@@ -1,0 +1,80 @@
+Project: Automated Fact-Checker for Vernacular News
+
+Live Links:
+•	https://ghoshsayan000.github.io/fact-checker/frontend/index.html
+________________________________________
+
+What it does: Takes any news or social media post in any Indian language (Hindi, Tamil, Bengali, etc.), fact-checks it against live web sources, and returns a verdict of True, False, or Unverified with confidence score, explanation, and sources.
+________________________________________
+
+Tech Stack:
+•	Frontend: HTML, CSS, Vanilla JavaScript
+•	Backend: Python, FastAPI
+•	AI Model: Google Gemini (gemini-3-flash-preview)
+•	Web Search: SerpAPI
+•	Web Scraping: BeautifulSoup4
+•	Deployment: Render.com (backend), GitHub Pages (frontend)
+
+________________________________________
+
+The 5 Step Pipeline:
+Step 1 - Optimizer: Takes raw vernacular text, translates it to English using Gemini AI and extracts the single core factual claim. This is the required Pipeline Optimization technique — it strips all conversational fluff before any expensive processing happens, ensuring high throughput.
+Step 2 - Key Term Extractor: Gemini AI reads the clean claim and identifies key terms, context, and generates 2-3 targeted search queries for web verification.
+Step 3 - Web Search and Scrape: SerpAPI searches Google for each query and returns top results. BeautifulSoup4 scrapes the actual page content from each result for deeper analysis.
+Step 4 - Evidence Summarizer: Gemini AI reads all scraped web content and compresses it into structured evidence — summary, supporting sources, contradicting sources, and key facts.
+Step 5 - Verdict Engine: Gemini AI reasons over the summarized evidence and delivers a final verdict of True, False, or Unverified with confidence percentage, explanation, and source URLs.
+
+________________________________________
+
+Why this is better than Google Fact Check API: The Google Fact Check API only checks claims already in its database — covering maybe 1% of Indian vernacular misinformation.
+Our pipeline searches the live web, meaning it can fact-check any claim including breaking news, regional news, and claims that have never been checked before.
+It also provides AI reasoning and explanation, not just a database lookup.
+
+________________________________________
+
+How the Required Technique is implemented: The project requirement specifically asked for Pipeline Optimization. 
+This is implemented in Step 1 (step1_optimizer.py) where Gemini AI strips all conversational filler, emojis, hashtags, and irrelevant content from the raw post before any web search or analysis happens.
+This means the expensive steps (web search, scraping, AI analysis) only process clean, relevant factual claims — dramatically improving throughput and accuracy.
+
+________________________________________
+
+Folder Structure:
+ fact-checker/
+├── backend/
+│   ├── __init__.py
+│   └── main.py
+├── frontend/
+│   └── index.html
+├── pipeline/
+│   ├── __init__.py
+│   ├── step1_optimizer.py
+│   ├── step2_keyterms.py
+│   ├── step3_search.py
+│   ├── step4_summarize.py
+│   └── step5_verdict.py
+├── tests/
+│   └── __init__.py
+├── .env.example
+├── .gitignore
+├── LICENSE
+├── Procfile
+├── README.md
+├── render.yaml
+└── requirements.txt________________________________________
+API Keys needed:
+•	GEMINI_API_KEY — from aistudio.google.com (free, ~12 fact-checks per day)
+•	SERPAPI_KEY — from serpapi.com (free, 250 searches per month)
+________________________________________
+Free Tier Limits:
+•	Gemini API: ~12 fact-checks per day
+•	SerpAPI: 250 searches per month (83 fact-checks per month)
+•	Render: 750 hours per month (always free for this project)
+•	GitHub Pages: unlimited
+
+________________________________________
+
+Known Limitations:
+•	First request after 15 minutes of inactivity takes ~50 seconds (Render free tier sleep)
+•	Daily Gemini quota limits testing to ~12 fact-checks per day
+•	Create a fresh API key before demo if quota is exhausted
+
