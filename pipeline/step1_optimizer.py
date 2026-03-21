@@ -42,3 +42,4 @@ CLAIM: <single core factual claim>
         "translated": translated,
         "claim": claim
     }
+
