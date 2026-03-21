@@ -1,11 +1,10 @@
-import google.generativeai as genai
+import google.genai as genai
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def extract_keyterms(claim: str) -> dict:
     prompt = f"""
@@ -27,7 +26,10 @@ QUERIES:
 - <search query 2>
 - <search query 3>
 """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
     output = response.text.strip()
 
     keyterms = ""
