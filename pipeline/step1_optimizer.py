@@ -24,7 +24,7 @@ TRANSLATED: <full english translation>
 CLAIM: <single core factual claim>
 """
     response = client.models.generate_content(
-        model="gemini-1.0-pro",
+        model="gemini-3-flash-preview",
         contents=prompt
     )
     output = response.text.strip()
