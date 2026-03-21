@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: fact-checker-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SERPAPI_KEY
+        sync: false
+```
+
+Commit it.
+
+---
+
+**File 2** → Create new file → name it:
+```
+Procfile
+```
+
+Paste this:
+```
+web: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
