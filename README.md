@@ -105,6 +105,10 @@ fact-checker/
 │   └── step5_verdict.py
 ├── tests/
 │   └── __init__.py
+├── images/
+│   ├── System_Architecture.jpeg
+│   ├── Process-Flow.png
+│   └── Use_Case_Diagram.png
 ├── README.md
 ├── requirements.txt
 └── render.yaml
