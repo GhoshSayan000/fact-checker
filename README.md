@@ -89,7 +89,7 @@ It processes the input using an AI-powered pipeline and returns:
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Folder Structure
 
 ```bash
 fact-checker/
