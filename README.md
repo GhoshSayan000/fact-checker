@@ -3,6 +3,9 @@
 ## 🌐 Live Demo
 👉 https://ghoshsayan000.github.io/fact-checker/frontend/index.html
 
+## 🌐 Demo Video
+👉 https://youtu.be/gekxQMtLIWA?si=BDKcL3lW746F0qeZ
+
 ---
 
 ## 📌 Overview
