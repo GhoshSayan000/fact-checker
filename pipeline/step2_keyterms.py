@@ -1,3 +1,7 @@
+_______________________________________________________________________________________________________________________________________________________________________________
+#Step 2: Extracts key terms,context and generates search queries from the claim.
+# These queries are used to search the web for verification evidence.
+_______________________________________________________________________________________________________________________________________________________________________________
 import google.genai as genai
 import os
 from dotenv import load_dotenv
