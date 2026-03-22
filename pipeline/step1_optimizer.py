@@ -1,3 +1,7 @@
+_______________________________________________________________________________________________________________________________________________________________________________
+# Step 1: Translates Vernacular text to English and extracts the core factual claim.
+# This is Pipeline Optimization technique- strips conersational fluff before processing.  
+_______________________________________________________________________________________________________________________________________________________________________________
 import google.genai as genai
 import os
 from dotenv import load_dotenv
