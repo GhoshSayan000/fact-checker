@@ -54,6 +54,19 @@
             z-index: 0;
         }
 
+        body::after {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+            background: rgba(233,30,140,0.04);
+            top: -120px;
+            right: -120px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
         .container {
             background: white;
             border-radius: 16px;
