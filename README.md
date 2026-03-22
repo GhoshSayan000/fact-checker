@@ -51,8 +51,7 @@ It processes the input using an AI-powered pipeline and returns:
 ---
 
 ## 🏗️ System Architecture
-
-> 📌 * System Architecture Diagram *
+![Architecture](images/System_Architecture.jpeg)
 
 ---
 
